@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place | Find Your Self</title>
+    <style>
+        /* ===== 공통: 헤더 / 푸터 ===== */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            color: #000000;
+            font-family: sans-serif;
+            padding-top: 80px;
+        }
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            background-color: #000000;
+            border-bottom: 1px solid #fffff7;
+            height: 80px;
+        }
+
+        .header-inner {
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 clamp(8px, 4vw, 40px);
+            width: 100%;
+        }
+
+        .logo-box img {
+            height: clamp(18px, 3vw, 30px);
+            display: block;
+        }
+
+        .gnb ul {
+            display: flex;
+            gap: clamp(12px, 4vw, 40px);
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gnb a {
+            color: #fffff7;
+            text-decoration: none;
+            font-size: clamp(10px, 1.5vw, 15px);
+            font-weight: 400;
+        }
+
+        .gnb a:hover {
+            opacity: 0.6;
+        }
+
+        .site-footer {
+    background-color: #000000;
+    border-top: 1px solid #fffff7;
+    width: 100%;
+    padding: 30px 0;
+    box-sizing: border-box;
+}
+
+.footer-inner {
+    max-width: 1400px; /* 페이지 전체 폭에 맞게 */
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 80px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-logo img {
+    height: clamp(14px, 2.2vw, 22px); /* 헤더보다 작은 로고 */
+    display: block;
+}
+
+.footer-text {
+    text-align: right;
+    color: #fffff7;
+    line-height: 1.4;
+    font-size: clamp(10px, 1.1vw, 13px);
+    font-weight: 300;
+}
+
+
+        /* ===== Place 페이지 전용 ===== */
+
+        main.place-main {
+            color: #fffff7;
+            padding: 12px 0 0;
+        }
+
+        .place-inner {
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        .serif {
+            font-family: serif;
+        }
+
+        .tilted {
+            font-style: italic;
+            text-decoration: none;
+        }
+
+        @keyframes lineSlideFade {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .place-title {
+            font-size: clamp(26px, 3.4vw, 52px);
+            font-weight: 100;
+            font-size: 57px;
+            letter-spacing: -0.07em;
+            margin: 15px 0 20px;
+            text-align: center;
+            color: #f9f9c0;
+
+            opacity: 0;
+            transform: translateX(-25px);
+            animation: lineSlideFade 1s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+
+        /* 카드 3×2 그리드 */
+        .place-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 1fr;
+            margin: 0;
+        }
+
+        .place-card {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            overflow: hidden;
+            cursor: pointer; /* 클릭 가능한 느낌 */
+        }
+
+        /* 각 카드 기본 배경색 */
+        .place-card--green     { background-color: #ff6d40; }
+        .place-card--seoul     { background-color: #e1e882; }
+        .place-card--river     { background-color: #fffef8; }
+        .place-card--lake      { background-color: #a6bdff; }
+        .place-card--aquarium  { background-color: #fce4d8; }
+        .place-card--palace    { background-color: #2c4c32; }
+
+        /* 텍스트 레이아웃 */
+        .place-card-inner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 32px 40px;
+            color: #000000;
+            transition: opacity 0.25s ease;
+        }
+
+        .place-card--palace .place-card-inner {
+            color: #fffff7;
+        }
+
+        .place-name {
+            font-size: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .place-desc {
+            font-size: 14px;
+            font-weight: 300;
+            text-align: center;
+            color: rgba(0, 0, 0, 0.88);
+            margin: 0;
+        }
+
+        .place-card--palace .place-desc {
+            color: rgba(255, 255, 247, 0.88) !important;
+        }
+
+        /* 이미지 레이어 (기본은 숨김) */
+        .place-image {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .place-card--green    .place-image { background-image: url("녹지.png"); }
+        .place-card--seoul    .place-image { background-image: url("서울숲.png"); }
+        .place-card--river    .place-image { background-image: url("한강.png"); }
+        .place-card--lake     .place-image { background-image: url("석촌호수.png"); }
+        .place-card--aquarium .place-image { background-image: url("아쿠아리움.png"); }
+        .place-card--palace   .place-image { background-image: url("창경궁.png"); }
+
+        /* === 클릭 시 토글되는 상태 === */
+        .place-card.is-open .place-image {
+            opacity: 1;
+        }
+
+        .place-card.is-open .place-card-inner {
+            opacity: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .place-card-inner {
+                padding: 24px 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .place-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .place-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo-box">
+            <a href="index.html">
+                <img src="logo.png" alt="logo">
+            </a>
+        </div>
+        <nav class="gnb">
+            <ul>
+                <li><a href="keeping.html">Keeping</a></li>
+                <li><a href="place.html">Place</a></li>
+                <li><a href="reaction.html">Reaction</a></li>
+                <li><a href="reading.html">Reading</a></li>
+                <li><a href="now.html">Now</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="place-main">
+    <div class="place-inner">
+        <h1 class="place-title serif tilted">
+            Places Where Nature Stays in the City and Helps Me Slow Down
+        </h1>
+
+        <section class="place-grid">
+            <!-- 1행 -->
+            <article class="place-card place-card--green">
+                <div class="place-card-inner">
+                    <div class="place-name">녹지</div>
+                    <p class="place-desc">초록색으로 가득한 풍경을 보면 마음이 편해진다.</p>
+                </div>
+                <div class="place-image"></div>
+            </article>
+
+            <article class="place-card place-card--seoul">
+                <div class="place-card-inner">
+                    <div class="place-name">서울숲</div>
+                    <p class="place-desc">다리에서 바라보는 초록 풍경을 보면 환기가 된다.</p>
+                </div>
+                <div class="place-image"></div>
+            </article>
+
+            <article class="place-card place-card--river">
+                <div class="place-card-inner">
+                    <div class="place-name">한강</div>
+                    <p class="place-desc">물멍을 하면 시간 가는 줄 모르고 잡생각이 사라진다.</p>
+                </div>
+                <div class="place-image"></div>
+            </article>
+
+            <!-- 2행 -->
+            <article class="place-card place-card--lake">
+                <div class="place-card-inner">
+                    <div class="place-name">석촌호수</div>
+                    <p class="place-desc">거위 가족이 다니는 걸 볼 수 있다.</p>
+                </div>
+                <div class="place-image"></div>
+            </article>
+
+            <article class="place-card place-card--aquarium">
+                <div class="place-card-inner">
+                    <div class="place-name">아쿠아리움</div>
+                    <p class="place-desc">웅장함을 느끼면서 보는 재미가 크다.</p>
+                </div>
+                <div class="place-image"></div>
+            </article>
+
+            <article class="place-card place-card--palace">
+                <div class="place-card-inner">
+                    <div class="place-name">창경궁</div>
+                    <p class="place-desc">계절마다 색다른 춘당지의 풍경을 보는 재미가 쏠쏠하다.</p>
+                </div>
+                <div class="place-image"></div>
+            </article>
+        </section>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        
+        <!-- 좌측 로고 -->
+        <div class="footer-logo">
+            <img src="logo.png" alt="Find Your Logo">
+        </div>
+
+        <!-- 우측 텍스트 -->
+        <div class="footer-text">
+            © 2025 Find Your Self. All rights reserved.<br>
+            Design &amp; Code Kwonserin
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 카드 클릭 시 이미지 / 색 배경 토글
+    document.querySelectorAll('.place-card').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('is-open');
+        });
+    });
+</script>
+
+</body>
+</html>

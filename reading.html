@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading | Find Your Self</title>
+    <style>
+        /* ===== 공통: 메인페이지와 동일 ===== */
+        body {
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            color: #000000;
+            font-family: sans-serif;
+            padding-top: 80px;
+        }
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            background-color: #000000;
+            border-bottom: 1px solid #fffff7;
+            height: 80px;
+        }
+
+        .header-inner {
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 clamp(8px, 4vw, 40px);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo-box img {
+            height: clamp(18px, 3vw, 30px);
+            display: block;
+        }
+
+        .gnb ul {
+            display: flex;
+            gap: clamp(12px, 4vw, 40px);
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gnb a {
+            color: #fffff7;
+            text-decoration: none;
+            font-size: clamp(10px, 1.5vw, 15px);
+            font-weight: 400;
+        }
+
+        .gnb a:hover {
+            opacity: 0.6;
+        }
+
+        .site-footer {
+    background-color: #000000;
+    border-top: 1px solid #fffff7;
+    width: 100%;
+    padding: 30px 0;
+    box-sizing: border-box;
+}
+
+.footer-inner {
+    max-width: 1400px; /* 페이지 전체 폭에 맞게 */
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 80px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-logo img {
+    height: clamp(14px, 2.2vw, 22px); /* 헤더보다 작은 로고 */
+    display: block;
+}
+
+.footer-text {
+    text-align: right;
+    color: #fffff7;
+    line-height: 1.4;
+    font-size: clamp(10px, 1.1vw, 13px);
+    font-weight: 300;
+}
+
+
+        /* ===== 공통 섹션/타이틀 (keeping과 동일) ===== */
+
+        main.reading-main {
+            color: #f9f9c0;
+            padding: 80px clamp(24px, 5vw, 80px) 100px;
+            box-sizing: border-box;
+        }
+
+        .keep-section {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .serif {
+            font-family: serif;
+        }
+
+        .tilted {
+            display: inline-block;
+            position: relative;
+            font-style: italic;
+        }
+
+        @keyframes lineSlideFade {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .keep-title {
+            font-size: clamp(40px, 5vw, 72px);
+            font-weight: 100;
+            letter-spacing: -0.07em;
+            margin: 40px 0 40px;
+            opacity: 0;
+            transform: translateX(-25px);
+            animation: lineSlideFade 1s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+
+        /* ===== Reading 페이지 전용 ===== */
+
+        .reading-grid {
+            display: flex;
+            margin-top: 100px;
+            justify-content: center;
+            align-items: flex-start;
+            gap: clamp(160px, 22vw, 300px); /* 가로 간격 */
+        }
+
+        .reading-column {
+            flex: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(200px, 24vw, 400px);  /* 세로 간격 */
+            align-items: center;
+        }
+
+        .reading-column.right {
+            margin-top: 300px;   /* 우측 컬럼 아래로 내리기 */
+        }
+
+        .reading-item {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 260px;
+        }
+
+        .reading-image-wrap {
+            width: 100%;
+            border-radius: 0;
+            overflow: hidden;
+            background-color: #000000;
+        }
+
+        .reading-image-wrap img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* 책 제목 */
+        .reading-text {
+            font-size: clamp(11px, 1.1vw, 13px);
+            font-weight: 300;
+            line-height: 1.4;
+            color: #fffff7;
+            margin-top: 16px;
+        }
+
+        .reading-audio-wrap {
+            width: 100%;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reading-audio-wrap audio {
+            display: none; /* 오디오 바 숨김 */
+        }
+
+        /* Play 텍스트 버튼 */
+        .reading-play {
+            font-size: clamp(10px, 1vw, 12px);
+            font-weight: 100;
+            color: #fffff7;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .reading-play:hover {
+            opacity: 0.7;
+        }
+
+        /* 설명 문구 (Play 옆) */
+        .reading-desc {
+            font-size: clamp(10px, 1vw, 12px);
+            font-weight: 400;
+            color: #fffff7;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .reading-desc.show {
+            opacity: 1;
+        }
+
+        /* 하단 라인 */
+        .reading-line {
+            width: 100%;
+            height: 1px;
+            background-color: #fffff7;
+            opacity: 0.3;
+            margin-top: 0px;
+        }
+
+        @media (max-width: 900px) {
+            .reading-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .reading-column {
+                width: 100%;
+                align-items: center;
+            }
+            .reading-item {
+                max-width: 220px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo-box">
+            <a href="index.html"><img src="logo.png" alt="logo"></a>
+        </div>
+
+        <nav class="gnb">
+            <ul>
+                <li><a href="keeping.html">Keeping</a></li>
+                <li><a href="place.html">Place</a></li>
+                <li><a href="reaction.html">Reaction</a></li>
+                <li><a href="reading.html">Reading</a></li>
+                <li><a href="now.html">Now</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="reading-main">
+    <section class="keep-section">
+        <!-- 타이틀 -->
+        <h1 class="keep-title serif tilted">Reading What Stays With Me</h1>
+
+        <!-- 카드 레이아웃 -->
+        <div class="reading-grid">
+            <!-- 왼쪽 컬럼 -->
+            <div class="reading-column left">
+                <article class="reading-item">
+                    <div class="reading-image-wrap">
+                        <img src="면도날.jpeg" alt="면도날">
+                    </div>
+                    <p class="reading-text">숭고함이라는 표현을 생각해보게 된다.</p>
+                    <div class="reading-audio-wrap">
+                        <audio src="면도날.mp3"></audio>
+                        <button type="button" class="reading-play">Play →</button>
+                        <span class="reading-desc">
+                            사유, 성찰, 고요
+                        </span>
+                    </div>
+                    <div class="reading-line"></div>
+                </article>
+
+                <article class="reading-item">
+                    <div class="reading-image-wrap">
+                        <img src="케이크와맥주.jpeg" alt="케이크와 맥주">
+                    </div>
+                    <p class="reading-text">이해를 못해서 다시 읽을 예정이다.</p>
+                    <div class="reading-audio-wrap">
+                        <audio src="케이크와맥주.mp3"></audio>
+                        <button type="button" class="reading-play">Play →</button>
+                        <span class="reading-desc">
+                            담담함, 아이러니, 풍자
+                        </span>
+                    </div>
+                    <div class="reading-line"></div>
+                </article>
+
+                <article class="reading-item">
+                    <div class="reading-image-wrap">
+                        <img src="아우라.jpeg" alt="아우라">
+                    </div>
+                    <p class="reading-text">노부인의 감정을 함께 느끼게 하는 책이다.</p>
+                    <div class="reading-audio-wrap">
+                        <audio src="아우라.mp3"></audio>
+                        <button type="button" class="reading-play">Play →</button>
+                        <span class="reading-desc">
+                            신비, 몽환, 긴장
+                        </span>
+                    </div>
+                    <div class="reading-line"></div>
+                </article>
+            </div>
+
+            <!-- 오른쪽 컬럼 -->
+            <div class="reading-column right">
+                <article class="reading-item">
+                    <div class="reading-image-wrap">
+                        <img src="데미안.jpg" alt="데미안">
+                    </div>
+                    <p class="reading-text">공감과 괴리감을 동시에 느낄 수 있다.</p>
+                    <div class="reading-audio-wrap">
+                        <audio src="데미안.mp3"></audio>
+                        <button type="button" class="reading-play">Play →</button>
+                        <span class="reading-desc">
+                            내면 성찰, 빛과 어둠, 성장
+                        </span>
+                    </div>
+                    <div class="reading-line"></div>
+                </article>
+
+                <article class="reading-item">
+                    <div class="reading-image-wrap">
+                        <img src="사양.jpg" alt="사양">
+                    </div>
+                    <p class="reading-text">올해 꼭 읽어보고 싶은 책이다.</p>
+                    <div class="reading-audio-wrap">
+                        <audio src="사양.mp3"></audio>
+                        <button type="button" class="reading-play">Play →</button>
+                        <span class="reading-desc">
+                            쓸쓸, 고요, 우울
+                        </span>
+                    </div>
+                    <div class="reading-line"></div>
+                </article>
+
+                <article class="reading-item">
+                    <div class="reading-image-wrap">
+                        <img src="브람스를좋아하세요.jpeg" alt="브람스를 좋아하세요">
+                    </div>
+                    <p class="reading-text">최근에 가장 재밌게 읽은 책이다.</p>
+                    <div class="reading-audio-wrap">
+                        <audio src="브람스를좋아하세요.mp3"></audio>
+                        <button type="button" class="reading-play">Play →</button>
+                        <span class="reading-desc">
+                            어른, 불안, 회상
+                        </span>
+                    </div>
+                    <div class="reading-line"></div>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        
+        <!-- 좌측 로고 -->
+        <div class="footer-logo">
+            <img src="logo.png" alt="Find Your Logo">
+        </div>
+
+        <!-- 우측 텍스트 -->
+        <div class="footer-text">
+            © 2025 Find Your Self. All rights reserved.<br>
+            Design &amp; Code Kwonserin
+        </div>
+    </div>
+</footer>
+<script>
+    // 각 카드별 Play 버튼에 기능 연결
+    const items = document.querySelectorAll('.reading-item');
+
+    items.forEach(item => {
+        const audio = item.querySelector('audio');
+        const btn   = item.querySelector('.reading-play');
+        const desc  = item.querySelector('.reading-desc');
+
+        if (!audio || !btn || !desc) return;
+
+        btn.addEventListener('click', () => {
+            // 다른 오디오/텍스트는 모두 정지 및 숨김
+            document.querySelectorAll('.reading-item audio').forEach(a => {
+                if (a !== audio) {
+                    a.pause();
+                    a.currentTime = 0;
+                    const otherItem = a.closest('.reading-item');
+                    const otherBtn  = otherItem.querySelector('.reading-play');
+                    const otherDesc = otherItem.querySelector('.reading-desc');
+                    if (otherBtn)  otherBtn.textContent = 'Play →';
+                    if (otherDesc) otherDesc.classList.remove('show');
+                }
+            });
+
+            // 현재 것 재생 / 일시정지
+            if (audio.paused) {
+                audio.play();
+                btn.textContent = 'Pause ←';
+                desc.classList.add('show');
+            } else {
+                audio.pause();
+                btn.textContent = 'Play →';
+                desc.classList.remove('show');
+            }
+        });
+
+        // 재생이 끝나면 버튼 텍스트와 설명 초기화
+        audio.addEventListener('ended', () => {
+            btn.textContent = 'Play →';
+            desc.classList.remove('show');
+        });
+    });
+</script>
+
+</body>
+</html>

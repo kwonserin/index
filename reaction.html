@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction | Find Your Self</title>
+
+    <style>
+        /* 공통 설정 */
+        body {
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            color: #fffff7;
+            font-family: sans-serif;
+            padding-top: 80px;
+        }
+
+        /* 헤더 */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            background-color: #000000;
+            border-bottom: 1px solid #fffff7;
+            height: 80px;
+        }
+
+        .header-inner {
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 clamp(8px, 4vw, 40px);
+        }
+
+        .logo-box img {
+            height: clamp(18px, 3vw, 30px);
+            display: block;
+        }
+
+        .gnb ul {
+            display: flex;
+            gap: clamp(12px, 4vw, 40px);
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gnb a {
+            color: #fffff7;
+            text-decoration: none;
+            font-size: clamp(10px, 1.5vw, 15px);
+            font-weight: 400;
+        }
+
+        .gnb a:hover {
+            opacity: 0.6;
+        }
+
+        /* 메인 여백 */
+        main {
+            padding: 80px clamp(40px, 8vw, 120px);
+        }
+
+        /* 세리프 + 기울기 (공통) */
+        .serif {
+            font-family: serif;
+        }
+        .tilted {
+            display: inline-block;
+            position: relative;
+            font-style: italic;
+        }
+
+        /* ===== 타이틀 애니메이션 (Keeping과 동일) ===== */
+        @keyframes lineSlideFade {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);  /* 왼쪽에서 시작 */
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);       /* 제자리에서 보이게 */
+            }
+        }
+
+        /* 타이틀 */
+        .reaction-title {
+            font-size: clamp(40px, 5vw, 72px);
+            font-weight: 100;
+            letter-spacing: -0.07em;
+            margin: 40px 0 40px;
+            color: #f9f9c0;
+
+            opacity: 0;
+            transform: translateX(-25px);
+            animation: lineSlideFade 1s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+
+        /* 리스트 전체 영역 */
+        .reaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* 한 줄 레이아웃 */
+        .reaction-row {
+            display: grid;
+            grid-template-columns: 70px 1fr 160px; /* 번호 / 텍스트 / 이미지 */
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(255,255,247,0.3);
+            transition: padding 0.25s ease;
+            position: relative;
+        }
+
+        /* 감정 텍스트에 hover 되었을 때만 줄을 열어줌 */
+        .reaction-row.is-active {
+            padding-bottom: 48px;
+        }
+
+        /* 번호 */
+        .reaction-num {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* 감정 텍스트 */
+        .emotion-text {
+            font-size: 36px;
+            font-weight: 400;
+            letter-spacing: 0;
+            cursor: default;
+            display: inline-block;
+        }
+
+        /* 감정 이미지 */
+        .emotion-img img {
+            width: 140px;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        /* 설명 텍스트 */
+        .emotion-desc {
+            position: absolute;
+            left: 70px;
+            bottom: 20px;
+            font-size: 13px;
+            font-weight: 300;
+            color: rgba(255,255,247,0.88);
+            opacity: 0;
+            transform: translateY(5px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        /* 줄이 활성화됐을 때 설명 노출 */
+        .reaction-row.is-active .emotion-desc {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .site-footer {
+    background-color: #000000;
+    border-top: 1px solid #fffff7;
+    width: 100%;
+    padding: 30px 0;
+    box-sizing: border-box;
+}
+
+.footer-inner {
+    max-width: 1400px; /* 페이지 전체 폭에 맞게 */
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 80px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-logo img {
+    height: clamp(14px, 2.2vw, 22px); /* 헤더보다 작은 로고 */
+    display: block;
+}
+
+.footer-text {
+    text-align: right;
+    color: #fffff7;
+    line-height: 1.4;
+    font-size: clamp(10px, 1.1vw, 13px);
+    font-weight: 300;
+}
+
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo-box">
+            <a href="index.html">
+                <img src="logo.png" alt="logo">
+            </a>
+        </div>
+        <nav class="gnb">
+            <ul>
+                <li><a href="keeping.html">Keeping</a></li>
+                <li><a href="place.html">Place</a></li>
+                <li><a href="reaction.html">Reaction</a></li>
+                <li><a href="reading.html">Reading</a></li>
+                <li><a href="now.html">Now</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <!-- 타이틀 -->
+    <h1 class="reaction-title serif tilted">Reacting to What I Feel</h1>
+
+    <div class="reaction-list">
+
+        <!-- 01 JOYFUL -->
+        <div class="reaction-row">
+            <div class="reaction-num">01</div>
+            <div class="emotion-text">JOYFUL</div>
+            <div class="emotion-img">
+                <img src="즐거움.jpg" alt="joyful">
+            </div>
+            <div class="emotion-desc">놀이기구를 탈 생각만 해도 설레고 기대되는 마음에 즐겁다.</div>
+            <audio class="emotion-audio" src="즐거움.mp3"></audio>
+        </div>
+
+        <!-- 02 DELIGHT -->
+        <div class="reaction-row">
+            <div class="reaction-num">02</div>
+            <div class="emotion-text">DELIGHT</div>
+            <div class="emotion-img">
+                <img src="기쁨.jpg" alt="delight">
+            </div>
+            <div class="emotion-desc">여행의 시작인 비행은 항상 기쁘다.</div>
+            <audio class="emotion-audio" src="기쁨.mp3"></audio>
+        </div>
+
+        <!-- 03 SERENITY -->
+        <div class="reaction-row">
+            <div class="reaction-num">03</div>
+            <div class="emotion-text">SERENITY</div>
+            <div class="emotion-img">
+                <img src="평온함.jpg" alt="serene">
+            </div>
+            <div class="emotion-desc">조용한 산책길을 걸으면 마음이 평온해진다.</div>
+            <audio class="emotion-audio" src="평온함.mp3"></audio>
+        </div>
+
+        <!-- 04 FASCINATED -->
+        <div class="reaction-row">
+            <div class="reaction-num">04</div>
+            <div class="emotion-text">FASCINATED</div>
+            <div class="emotion-img">
+                <img src="신기함.jpg" alt="fascinated">
+            </div>
+            <div class="emotion-desc">새로운 전시를 보면 호기심이 생기고 한참 바라보게 된다.</div>
+            <audio class="emotion-audio" src="신기함.mp3"></audio>
+        </div>
+
+        <!-- 05 FEARFUL -->
+        <div class="reaction-row">
+            <div class="reaction-num">05</div>
+            <div class="emotion-text">FEARFUL</div>
+            <div class="emotion-img">
+                <img src="무서움.jpg" alt="fearful">
+            </div>
+            <div class="emotion-desc">밤에 어두운 길을 걸을 때면 괜히 무섭다.</div>
+            <audio class="emotion-audio" src="무서움.mp3"></audio>
+        </div>
+
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        
+        <!-- 좌측 로고 -->
+        <div class="footer-logo">
+            <img src="logo.png" alt="Find Your Logo">
+        </div>
+
+        <!-- 우측 텍스트 -->
+        <div class="footer-text">
+            © 2025 Find Your Self. All rights reserved.<br>
+            Design &amp; Code Kwonserin
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 감정 텍스트 hover 시 설명 + 음악 재생
+    const rows = document.querySelectorAll('.reaction-row');
+
+    rows.forEach(row => {
+        const text  = row.querySelector('.emotion-text');
+        const audio = row.querySelector('.emotion-audio');
+
+        if (!text || !audio) return;
+
+        text.addEventListener('mouseenter', () => {
+            row.classList.add('is-active');
+
+            document.querySelectorAll('.emotion-audio').forEach(a => {
+                if (a !== audio) {
+                    a.pause();
+                    a.currentTime = 0;
+                }
+            });
+
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {});
+            }
+        });
+
+        text.addEventListener('mouseleave', () => {
+            row.classList.remove('is-active');
+            audio.pause();
+            audio.currentTime = 0;
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keeping | Find Your Self</title>
+    <style>
+        /* ===== 공통: 메인페이지와 동일 ===== */
+        body {
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            color: #000000;
+            font-family: sans-serif;
+            padding-top: 80px;
+        }
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            background-color: #000000;
+            border-bottom: 1px solid #fffff7;
+            height: 80px;
+        }
+
+        .header-inner {
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 clamp(8px, 4vw, 40px);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo-box img {
+            height: clamp(18px, 3vw, 30px);
+            display: block;
+        }
+
+        .gnb ul {
+            display: flex;
+            gap: clamp(12px, 4vw, 40px);
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gnb a {
+            color: #fffff7;
+            text-decoration: none;
+            font-size: clamp(10px, 1.5vw, 15px);
+            font-weight: 400;
+        }
+
+        .gnb a:hover {
+            opacity: 0.6;
+        }
+
+       .site-footer {
+    background-color: #000000;
+    border-top: 1px solid #fffff7;
+    width: 100%;
+    padding: 30px 0;
+    box-sizing: border-box;
+}
+
+.footer-inner {
+    max-width: 1400px; /* 페이지 전체 폭에 맞게 */
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 80px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-logo img {
+    height: clamp(14px, 2.2vw, 22px); /* 헤더보다 작은 로고 */
+    display: block;
+}
+
+.footer-text {
+    text-align: right;
+    color: #fffff7;
+    line-height: 1.4;
+    font-size: clamp(10px, 1.1vw, 13px);
+    font-weight: 300;
+}
+
+
+        /* ===== Keeping 페이지 전용 ===== */
+
+        main.keep-main {
+            color: #f9f9c0;
+            padding: 80px clamp(24px, 5vw, 80px) 100px;
+            box-sizing: border-box;
+        }
+
+        .keep-section {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 메인페이지와 동일한 세리프 스타일 */
+        .serif {
+            font-family: serif;
+        }
+        .tilted {
+            display: inline-block;
+            position: relative;
+            font-style: italic;
+        }
+
+        /* ===== 타이틀 애니메이션 (메인과 동일 방향) ===== */
+
+        @keyframes lineSlideFade {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);  /* 왼쪽에서 시작 */
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);       /* 제자리에서 보이게 */
+            }
+        }
+
+        /* 상단 타이틀 */
+        .keep-title {
+            font-size: clamp(40px, 5vw, 72px);
+            font-weight: 100;
+            letter-spacing: -0.07em;
+            margin: 40px 0 40px;
+
+            /* 메인 타이틀과 같은 인터랙션 */
+            opacity: 0;
+            transform: translateX(-25px);
+            animation: lineSlideFade 1s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+
+
+        /* 카드들을 감싸는 뷰포트 */
+        .keep-cards-viewport {
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        /* 카드들을 가로로 나열하는 트랙 */
+        .keep-cards-track {
+            display: flex;
+            gap: clamp(12px, 3vw, 40px);
+            transition: transform 0.4s ease;
+            will-change: transform;
+        }
+
+        /* 카드 영역 (반응형 크기) */
+        .keep-card {
+            flex: 0 0 auto;
+            width: clamp(160px, 22vw, 280px);
+        }
+
+        .keep-card-image {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 7 / 9;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #000000;
+        }
+
+        .keep-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 호버 시 흰 카드 */
+        .keep-card-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: #f9f9c0;
+            color: #000000;
+            padding: 24px 22px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .keep-card-desc {
+            font-size: clamp(10px, 1.6vw, 13px);
+            line-height: 1.6;
+            font-weight: 300;
+            margin: 0 0 18px;
+        }
+
+        .keep-card-title {
+            font-size: clamp(11px, 1.8vw, 15px);
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .keep-card-image:hover .keep-card-overlay {
+            opacity: 1;
+        }
+
+        /* 하단 설명 + 버튼 */
+        .keep-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 50px;
+            gap: 40px;
+        }
+
+        .keep-desc {
+            font-size: clamp(12px, 2vw, 14px);
+            font-weight: 300;
+            line-height: 1.6;
+            color: #fffff7;
+            margin: 0;
+        }
+
+        .keep-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* 버튼 스타일 */
+        .keep-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 1px solid #fffff7;
+            background: transparent;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .keep-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .keep-btn:hover {
+            background-color: rgba(255,255,247,0.06);
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .keep-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 24px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo-box">
+            <a href="index.html"><img src="logo.png" alt="logo"></a>
+        </div>
+
+        <nav class="gnb">
+            <ul>
+                <li><a href="keeping.html">Keeping</a></li>
+                <li><a href="place.html">Place</a></li>
+                <li><a href="reaction.html">Reaction</a></li>
+                <li><a href="reading.html">Reading</a></li>
+                <li><a href="now.html">Now</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="keep-main">
+    <section class="keep-section">
+        <!-- 타이틀 -->
+        <h1 class="keep-title serif tilted">Keeping What I Choose</h1>
+
+        <!-- 카드 슬라이더 -->
+        <div class="keep-cards-viewport">
+            <div class="keep-cards-track">
+                <!-- 1 -->
+                <article class="keep-card">
+                    <div class="keep-card-image">
+                        <img src="리락쿠마.jpg" alt="리락쿠마와 실바니안">
+                        <div class="keep-card-overlay">
+                            <p class="keep-card-desc">
+                                가장 좋아하는 캐릭터들이다.<br>
+                                가챠에 이 두가지가 있으면 꼭 뽑는 편이다.<br>
+                                리락쿠마는 휴대폰에 달고 다닐 정도로<br>좋아한다.
+                            </p>
+                            <p class="keep-card-title">리락쿠마와 실바니안</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 2 -->
+                <article class="keep-card">
+                    <div class="keep-card-image">
+                        <img src="트롤.jpg" alt="트롤">
+                        <div class="keep-card-overlay">
+                            <p class="keep-card-desc">
+                                못생겼지만 작고 귀여워서 좋아한다.<br>
+                                머리색이 다양해 친구들에게 어울리는<br>색을 선물하기도 좋다.<br>
+                                세워두면 자꾸 쓰려져서 컵에 담아 보관중이다.
+                            </p>
+                            <p class="keep-card-title">트롤</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 3 -->
+                <article class="keep-card">
+                    <div class="keep-card-image">
+                        <img src="파우치.jpg" alt="파우치">
+                        <div class="keep-card-overlay">
+                            <p class="keep-card-desc">
+                                헬로키티와 호피 조합이 예뻐서 구매했다.<br>
+                                후쿠오카에서 구매한 것 중 가장 잘 쓰고 있다.<br>
+                                지금은 조금 지저분해졌다.
+                            </p>
+                            <p class="keep-card-title">헬로키티 파우치</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 4 -->
+                <article class="keep-card">
+                    <div class="keep-card-image">
+                        <img src="조명.jpg" alt="조명">
+                        <div class="keep-card-overlay">
+                            <p class="keep-card-desc">
+                                필요하지 않았지만 예뻐서 샀다.<br>
+                                잘 쓰진 않지만 없었다면<br>굉장히 허전했을 것 같다.<br>
+                                가끔 과제할 때 애용 중이다.
+                            </p>
+                            <p class="keep-card-title">단조명</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 5 -->
+                <article class="keep-card">
+                    <div class="keep-card-image">
+                        <img src="스티커.jpg" alt="스티커">
+                        <div class="keep-card-overlay">
+                            <p class="keep-card-desc">
+                                헬로키티 랜덤팩에서 나온 스티커이다.<br>
+                                다행히 맘에 드는 스티커가 나왔다.<br>
+                                노트북에 붙였더니 다 까져서 다시 사고 싶다.
+                            </p>
+                            <p class="keep-card-title">헬로키티 스티커</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 6 -->
+                <article class="keep-card">
+                    <div class="keep-card-image">
+                        <img src="엘피.jpg" alt="엘피">
+                        <div class="keep-card-overlay">
+                            <p class="keep-card-desc">
+                                엘피 플레이어는 없지만<br>꼭 틀어보고 싶은 앨범이다.<br>
+                                마이클잭슨 앨범 중 가장 좋아하는 ‘BAD’.<br>
+                                Man in the Mirror를 가장 좋아한다.
+                            </p>
+                            <p class="keep-card-title">마이클잭슨 엘피</p>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- 하단 설명 + 버튼 -->
+        <div class="keep-bottom">
+            <p class="keep-desc">
+                내 취향의 물건을 수집합니다.<br>
+                이 선택들로 내가 무엇을 좋아하는지 알아가게 됩니다.
+            </p>
+
+            <div class="keep-controls">
+                <button class="keep-btn keep-btn-prev">
+                    <img src="좌측버튼.png" alt="prev">
+                </button>
+                <button class="keep-btn keep-btn-next">
+                    <img src="우측버튼.png" alt="next">
+                </button>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        
+        <!-- 좌측 로고 -->
+        <div class="footer-logo">
+            <img src="logo.png" alt="Find Your Logo">
+        </div>
+
+        <!-- 우측 텍스트 -->
+        <div class="footer-text">
+            © 2025 Find Your Self. All rights reserved.<br>
+            Design &amp; Code Kwonserin
+        </div>
+    </div>
+</footer>
+
+<script>
+    const track    = document.querySelector('.keep-cards-track');
+    const viewport = document.querySelector('.keep-cards-viewport');
+    const cards    = document.querySelectorAll('.keep-card');
+    const prevBtn  = document.querySelector('.keep-btn-prev');
+    const nextBtn  = document.querySelector('.keep-btn-next');
+
+    let offset = 0;
+
+    function getStep() {
+        if (!cards.length) return 0;
+        const card = cards[0];
+        const style = window.getComputedStyle(track);
+        const gap = parseInt(style.gap || '0', 10);
+        return card.offsetWidth + gap;
+    }
+
+    function getMaxMove() {
+        const trackWidth    = track.scrollWidth;
+        const viewportWidth = viewport.clientWidth;
+        const maxMove = trackWidth - viewportWidth;
+        return Math.max(0, maxMove);
+    }
+
+    function updateSlider() {
+        const maxMove = getMaxMove();
+        offset = Math.min(offset, maxMove);
+        offset = Math.max(offset, 0);
+        track.style.transform = `translateX(${-offset}px)`;
+    }
+
+    prevBtn.addEventListener('click', () => {
+        const step = getStep();
+        offset -= step;
+        updateSlider();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        const step = getStep();
+        offset += step;
+        updateSlider();
+    });
+
+    window.addEventListener('load', updateSlider);
+    window.addEventListener('resize', () => {
+        updateSlider();
+    });
+</script>
+
+</body>
+</html>

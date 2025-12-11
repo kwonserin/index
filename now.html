@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Now Me | Find Your Self</title>
+    <style>
+        /* ===== 공통: 헤더 / 푸터 (다른 페이지와 동일) ===== */
+        body {
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            color: #000000;
+            font-family: sans-serif;
+            padding-top: 80px;
+        }
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            background-color: #000000;
+            border-bottom: 1px solid #fffff7;
+            height: 80px;
+        }
+
+        .header-inner {
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 clamp(8px, 4vw, 40px);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo-box img {
+            height: clamp(18px, 3vw, 30px);
+            display: block;
+        }
+
+        .gnb ul {
+            display: flex;
+            gap: clamp(12px, 4vw, 40px);
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gnb a {
+            color: #fffff7;
+            text-decoration: none;
+            font-size: clamp(10px, 1.5vw, 15px);
+            font-weight: 400;
+        }
+
+        .gnb a:hover {
+            opacity: 0.6;
+        }
+
+        .site-footer {
+            background-color: #000000;
+            border-top: 1px solid #fffff7;
+            width: 100%;
+            padding: 30px 0;
+            box-sizing: border-box;
+        }
+
+        .footer-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo img {
+            height: clamp(14px, 2.2vw, 22px);
+            display: block;
+        }
+
+        .footer-text {
+            text-align: right;
+            color: #fffff7;
+            line-height: 1.4;
+            font-size: clamp(10px, 1.1vw, 13px);
+            font-weight: 300;
+        }
+
+        /* ===== 공통: 타이틀 ===== */
+        main.now-main {
+            color: #f9f9c0;
+            padding: 80px clamp(24px, 5vw, 80px) 120px;
+            box-sizing: border-box;
+        }
+
+        .now-section {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .serif {
+            font-family: serif;
+        }
+
+        .tilted {
+            display: inline-block;
+            position: relative;
+            font-style: italic;
+        }
+
+        @keyframes lineSlideFade {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .now-title {
+            font-size: clamp(40px, 5vw, 72px);
+            font-weight: 100;
+            letter-spacing: -0.07em;
+            margin: 40px 0 60px;
+            opacity: 0;
+            transform: translateX(-25px);
+            animation: lineSlideFade 1s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+
+        /* ===== Now Me 전용 ===== */
+
+        .now-playground {
+            position: relative;
+            max-width: 1100px;
+            margin: 0 auto;
+            height: 520px;          /* 이미지가 겹칠 전체 높이 */
+            padding-top: 100px;     /* 타이틀 아래 여유 공간 */
+            box-sizing: border-box;
+        }
+
+        /* 뒤에 깔린 문장 */
+        .now-text {
+            position: relative;
+            color: #fffff75f;
+            font-size: clamp(28px, 2.4vw, 48px);
+            font-weight: 400;
+            line-height: 1.7;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .now-keyword {
+    color: #f9f9c0;
+    font-weight: 400;
+    font-style: italic;   /* 이미 있음 */
+    text-decoration: underline;
+    text-decoration-thickness: 1px;   /* 밑줄 얇게 */
+    text-underline-offset: 2px;    /* 기본 밑줄 추가 */
+
+    cursor: pointer;
+    padding: 0 2px;
+    white-space: nowrap;
+
+    position: relative;
+    z-index: 9999;
+}
+
+.now-keyword.active {
+    color: #9b9b6d;     /* 기존 색 변경 */
+    text-decoration: none;
+    text-decoration-thickness: 1px;   /* 밑줄 얇게 */
+    text-underline-offset: 2px;    /* 클릭 시 밑줄 제거 */
+}
+
+
+
+
+        /* 이미지 레이어 */
+        .now-images {
+            position: absolute;
+            inset: 0;
+            pointer-events: none; /* 이미지는 클릭 안 됨, 텍스트만 클릭 */
+        }
+
+        .now-image {
+            position: absolute;
+            width: 220px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            object-fit: cover;
+        }
+
+        .now-image.img1.show { opacity: 0.5; }
+.now-image.img2.show { opacity: 0.6; }
+.now-image.img3.show { opacity: 0.6; }
+.now-image.img4.show { opacity: 0.8; }
+.now-image.img5.show { opacity: 0.6; }
+.now-image.img6.show { opacity: 0.7; }
+.now-image.img7.show { opacity: 0.5; }
+.now-image.img8.show { opacity: 0.4; }
+.now-image.img9.show { opacity: 0.55; }
+
+        /* 각 이미지 위치 + z-index (PC 기준) */
+        .now-image.img1 {
+            top: 0%;
+            left: 35%;
+            z-index: 1;
+        }
+
+        .now-image.img2 {
+            top: 10%;
+            left: 45%;
+            z-index: 2;
+        }
+
+        .now-image.img3 {
+            top: 20%;
+            left: 20%;
+            z-index: 4;
+        }
+
+        .now-image.img4 {
+            top: 25%;
+            left: 55%;
+            z-index: 5;
+        }
+
+        .now-image.img5 {
+            top: 35%;
+            left: 35%;
+            z-index: 4;
+        }
+
+        .now-image.img6 {
+            top: 5%;
+            left: 62%;
+            z-index: 2;
+        }
+
+        .now-image.img7 {
+            top: 35%;
+            left: 80%;
+            z-index: 3;
+        }
+
+        .now-image.img8 {
+            top: 45%;
+            left: 0%;
+            z-index: 1;
+        }
+
+        .now-image.img9 {
+            top: 50%;
+            left: 60%;
+            z-index: 5;
+        }
+
+        /* ===== 반응형 ===== */
+
+        @media (max-width: 900px) {
+            main.now-main {
+                padding: 70px 20px 90px;
+            }
+
+            .now-title {
+                font-size: clamp(32px, 7vw, 52px);
+                text-align: center;
+            }
+
+            .now-playground {
+                max-width: 100%;
+                height: 460px;
+                padding-top: 70px;
+            }
+
+            .now-text {
+                font-size: clamp(16px, 4vw, 22px);
+                line-height: 1.6;
+            }
+
+            .now-image {
+                width: 150px;
+            }
+
+            /* 모바일용 위치 재배치 (조금 더 단순하게) */
+            .now-image.img1 { top: 5%;  left: 8%;  z-index: 1; }
+            .now-image.img2 { top: 15%; left: 45%; z-index: 2; }
+            .now-image.img3 { top: 5%;  left: 70%; z-index: 4; }
+
+            .now-image.img4 { top: 40%; left: 10%; z-index: 5; }
+            .now-image.img5 { top: 45%; left: 28%; z-index: 4; }
+            .now-image.img6 { top: 40%; left: 55%; z-index: 2; }
+
+            .now-image.img7 { top: 55%; left: 72%; z-index: 3; }
+            .now-image.img8 { top: 60%; left: 5%;  z-index: 1; }
+            .now-image.img9 { top: 62%; left: 35%; z-index: 5; }
+        }
+
+        @media (max-width: 500px) {
+            main.now-main {
+                padding: 60px 16px 70px;
+            }
+
+            .now-playground {
+                height: 430px;
+                padding-top: 60px;
+            }
+
+            .now-text {
+                font-size: clamp(14px, 4.2vw, 18px);
+            }
+
+            .now-image {
+                width: 130px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo-box">
+            <a href="index.html"><img src="logo.png" alt="logo"></a>
+        </div>
+
+        <nav class="gnb">
+            <ul>
+                <li><a href="keeping.html">Keeping</a></li>
+                <li><a href="place.html">Place</a></li>
+                <li><a href="reaction.html">Reaction</a></li>
+                <li><a href="reading.html">Reading</a></li>
+                <li><a href="now.html">Now</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="now-main">
+    <section class="now-section">
+        <h1 class="now-title serif tilted">What Makes Me Now</h1>
+
+        <div class="now-playground">
+            <!-- 뒤에 깔린 문장 + 클릭 가능한 단어들 -->
+            <div class="now-text">
+                현재 대부분의 시간을 책상에서 
+                <span class="now-keyword" data-target="img1">맥북</span>과 
+                <span class="now-keyword" data-target="img2">이어폰</span>,
+                <span class="now-keyword" data-target="img6">음악</span>,
+                으로 보냅니다.<br>
+                환기가 필요할 땐 
+                <span class="now-keyword" data-target="img3">카페에서 과제</span>를 합니다.
+                <span class="now-keyword" data-target="img4">침대 위 이불</span>은 하루 끝을 맞이하는 휴식의 공간입니다. 저의
+                <span class="now-keyword" data-target="img5">필수품</span>부터
+                <span class="now-keyword" data-target="img7">선반 위 물건</span>,<br>
+                <span class="now-keyword" data-target="img8">방의 일부분</span>까지 모두 저의 취향을 나타냅니다. <br>이러한 취향을 기록하고 하루를 마무리할 때는
+                <span class="now-keyword" data-target="img9">일기</span>를 씁니다.
+                <br>그리고 이 모든 것이 현재의 저를 구성합니다.
+            </div>
+
+            <!-- 이미지 레이어 -->
+            <div class="now-images">
+                <img src="콜라주맥북.jpg"   alt="" class="now-image img1" data-id="img1">
+                <img src="콜라주이어폰.jpg" alt="" class="now-image img2" data-id="img2">
+                <img src="콜라주카공.jpg"   alt="" class="now-image img3" data-id="img3">
+                <img src="콜라주침대.jpg"   alt="" class="now-image img4" data-id="img4">
+                <img src="콜라주립밤.jpg" alt="" class="now-image img5" data-id="img5">
+                <img src="콜라주음악.jpg"   alt="" class="now-image img6" data-id="img6">
+                <img src="콜라주선반.jpg"   alt="" class="now-image img7" data-id="img7">
+                <img src="콜라주포스터.jpg"   alt="" class="now-image img8" data-id="img8">
+                <img src="콜라주일기.jpg" alt="" class="now-image img9" data-id="img9">
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-logo">
+            <img src="logo.png" alt="Find Your Logo">
+        </div>
+        <div class="footer-text">
+            © 2025 Find Your Self. All rights reserved.<br>
+            Design &amp; Code Kwonserin
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 키워드를 클릭하면 이미지 ON/OFF 토글 + 키워드 색상 토글
+    const keywords = document.querySelectorAll('.now-keyword');
+
+    keywords.forEach(keyword => {
+        keyword.addEventListener('click', () => {
+            const targetId = keyword.dataset.target;
+            const img = document.querySelector('.now-image[data-id="' + targetId + '"]');
+            if (img) {
+                const isActive = img.classList.toggle('show');  // 이미지 on/off
+                keyword.classList.toggle('active', isActive);   // 키워드 색 on/off
+            }
+        });
+    });
+</script>
+
+
+</body>
+</html>

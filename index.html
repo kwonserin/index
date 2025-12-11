@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Self</title>
+    <style>
+        body {
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            color: #000000;
+            font-family: sans-serif;
+            padding-top: 80px;
+        }
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            background-color: #000000;
+            border-bottom: 1px solid #fffff7;
+            height: 80px;
+        }
+
+        .header-inner {
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 clamp(8px, 4vw, 40px);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo-box img {
+            height: clamp(18px, 3vw, 30px);
+            display: block;
+        }
+
+        .gnb ul {
+            display: flex;
+            gap: clamp(12px, 4vw, 40px);
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gnb a {
+            color: #fffff7;
+            text-decoration: none;
+            font-size: clamp(10px, 1.5vw, 15px);
+            font-weight: 400;
+        }
+
+        .gnb a:hover {
+            opacity: 0.6;
+        }
+
+        .main-title {
+            position: relative;
+            margin-top: 200px;
+            margin-bottom: 200px;
+            text-align: center;
+            color: #575752;
+        }
+
+        .main-copy {
+            font-size: 96px;
+            font-family: serif;
+            font-weight: 100;
+            letter-spacing: -0.07em;
+            line-height: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* 줄(문장) 단위 슬라이드 인 - 좌 → 우 */
+/* 줄(문장) 단위 슬라이드 인 - 좌 → 우 + fade-in */
+.main-copy-line {
+    display: block;
+    opacity: 0;                     /* 처음 완전 투명 */
+    transform: translateX(-50px);  /* 약간 왼쪽에서 시작 */
+    animation: lineSlideFade 1s ease-out forwards;
+}
+
+/* 등장 순서 */
+.main-copy-line.line1 { animation-delay: 0.1s; }
+.main-copy-line.line2 { animation-delay: 0.6s; }
+.main-copy-line.line3 { animation-delay: 1.1s; }
+.main-copy-line.line4 { animation-delay: 1.6s; }
+
+@keyframes lineSlideFade {
+    from {
+        opacity: 0;
+        transform: translateX(-25px);   /* 왼쪽에서 흐릿하게 시작 */
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);       /* 제자리, 완전 보임 */
+    }
+}
+
+
+
+        .serif {
+            font-family: serif;
+        }
+
+        .tilted {
+            display: inline-block;
+            position: relative;
+            text-decoration: underline;
+            text-underline-offset: 10px;
+            text-decoration-thickness: 1px;
+            font-style: serif;
+        }
+
+        .toggle-wrap:hover .tilted {
+            text-decoration: none;
+            font-style: italic;
+            font-weight: 1000;
+        }
+
+        .toggle-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .explore-text {
+            position: relative;
+            color: #fffff7;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .fyself-text {
+            position: absolute;
+            left: 0;
+            top: 60%;
+            transform: translate(-15px, -50%);
+            white-space: nowrap;
+            color: #f9f9c0;
+            font-size: inherit;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.7s ease-out, transform 0.3s ease-out;  
+        }
+
+        .toggle-wrap:hover .explore-text {
+            opacity: 0;
+        }
+
+        .toggle-wrap:hover .fyself-text {
+            opacity: 1;
+        }
+
+        .explore-text:hover + .fyself-text {
+            transform: translate(-35px, -50%);
+        }
+
+        /* 태블릿 */
+        @media (max-width: 1024px) {
+            .explore-text:hover + .fyself-text {
+                transform: translate(-20px, -50%);
+            }
+            .main-copy { font-size: 72px; }
+            .fyself-title { font-size: 72px; }
+        }
+
+        /* 작은 태블릿 */
+        @media (max-width: 768px) {
+            .explore-text:hover + .fyself-text {
+                transform: translate(-15px, -50%);
+            }
+            .main-copy { font-size: 48px; }
+            .fyself-title { font-size: 48px; }
+        }
+
+        /* 모바일 */
+        @media (max-width: 480px) {
+            .explore-text:hover + .fyself-text {
+                transform: translate(-10px, -50%);
+            }
+            .main-copy { font-size: 32px; }
+            .fyself-title { font-size: 32px; }
+        }
+
+       .site-footer {
+    background-color: #000000;
+    border-top: 1px solid #fffff7;
+    width: 100%;
+    padding: 30px 0;
+    box-sizing: border-box;
+}
+
+.footer-inner {
+    max-width: 1400px; /* 페이지 전체 폭에 맞게 */
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 80px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-logo img {
+    height: clamp(14px, 2.2vw, 22px); /* 헤더보다 작은 로고 */
+    display: block;
+}
+
+.footer-text {
+    text-align: right;
+    color: #fffff7;
+    line-height: 1.4;
+    font-size: clamp(10px, 1.1vw, 13px);
+    font-weight: 300;
+}
+
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo-box">
+            <a href="index.html">
+                <img src="logo.png" alt="logo">
+            </a>
+        </div>
+
+        <nav class="gnb">
+            <ul>
+                <li><a href="keeping.html">Keeping</a></li>
+                <li><a href="place.html">Place</a></li>
+                <li><a href="reaction.html">Reaction</a></li>
+                <li><a href="reading.html">Reading</a></li>
+                <li><a href="now.html">Now</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="main-title">
+        <div class="main-copy">
+            <!-- 원래 레이아웃 유지 + 줄 단위로 감싸기 -->
+            <span class="main-copy-line line1">
+                The time and process of
+            </span>
+
+            <span class="main-copy-line line2">
+                <span class="toggle-wrap">
+                    <span class="serif tilted explore-text" id="explore-text">
+                        exploring yourself
+                    </span>
+                    <span class="serif tilted fyself-text" id="fyself-text">
+                        FINDYOURSELF
+                    </span>
+                </span>
+                is important.
+            </span>
+
+            <span class="main-copy-line line3">
+                I hope everyone
+            </span>
+
+            <span class="main-copy-line line4">
+                can have that time.
+            </span>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        
+        <!-- 좌측 로고 -->
+        <div class="footer-logo">
+            <img src="logo.png" alt="Find Your Logo">
+        </div>
+
+        <!-- 우측 텍스트 -->
+        <div class="footer-text">
+            © 2025 Find Your Self. All rights reserved.<br>
+            Design &amp; Code Kwonserin
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
